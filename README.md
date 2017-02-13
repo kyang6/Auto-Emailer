@@ -9,23 +9,25 @@ file_type- the type of file that contacts_file is. Currently only JSON is suppor
 username_email- gmail email used to auto login if so desired (Required for auto_login)
 password- gmail password used to auto login if so desired (Required for auto_login)
 email_body - an array of lines that will be joined with \n\n later. Example
-    [
-    'Hey __receiver__,',
+~~~~
+    ['Hey __receiver__,',
     'I\'m __sender_name__, a fellow Stanford student studying computer science. I\'m working on an intense 
     class project where we interview professionals to find needs and problems in industries, and later 
     build software solutions for free.',
     '__misc__',
     'I would love to be able to talk to you!',
     'Thanks so much,',
-    '__sender_name__'
-    ]
-
+    '__sender_name__']
+~~~~
 subject_line - subject line
 sender_name - The name of the person who is sending the email.
 path_to_driver - Path to chrome driver (Required to work)
 
 # Contacts file 
-JSON contacts file should look like this: [{"emails":["james.zhang@stanford.edu"],"name":"James"}, {"emails":["kevin.yang@stanford.edu"],"name":"Kevin"},{"emails":["william@stanford.edu"],"name":"Will"}] 
+JSON contacts file should look like this: 
+~~~~
+[{"emails":["james.zhang@stanford.edu"],"name":"James"}, {"emails":["kevin.yang@stanford.edu"],"name":"Kevin"},{"emails":["william@stanford.edu"],"name":"Will"}] 
+~~~~
 
 # How to Use
 ~~~~
