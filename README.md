@@ -28,7 +28,7 @@ path_to_driver - Path to chrome driver (Required to work)
 JSON contacts file should look like this: [{"emails":["james.zhang@stanford.edu"],"name":"James"}, {"emails":["kevin.yang@stanford.edu"],"name":"Kevin"},{"emails":["william@stanford.edu"],"name":"Will"}] 
 
 # How to Use
-""" 
+~~~~
 from emailer import Emailer  
 
 msg = [
@@ -47,4 +47,4 @@ emailer = Emailer(email_body=msg, subject_line=subject, sender_name="Kevin", con
 
 emailer.custom_login()
 emailer.send_emails()
-"""
+~~~~
