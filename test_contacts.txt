@@ -1,0 +1,2 @@
+[{"name": "John", "emails": ["john@gmail.com"]}, 
+{"name": "Bill", "emails": ["bill@stanford.edu","bill@gmail.com"]}]
