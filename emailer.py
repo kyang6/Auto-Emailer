@@ -45,7 +45,7 @@ class Emailer:
         emailer.custom_login()
         emailer.send_emails()
     """
-    def __init__(self, contacts_file, file_type='JSON', username_email="__None__", password="__None__", \
+    def __init__(self, contacts_file, cc=[], file_type='JSON', username_email="__None__", password="__None__", \
         email_body="__Default_Email_Body__", subject_line="__Default_Subject_Line__", \
         sender_name = "__Default_Sender_Name__", path_to_driver = "No Path Specified"):
         """
@@ -91,6 +91,7 @@ class Emailer:
         self.subject_line = subject_line
         self.email_body = email_body
         self.sender_name = sender_name
+        self.cc = cc
 
 
     # Login to custom email. You need to type in your own information and login
@@ -107,8 +108,8 @@ class Emailer:
             print "Gmail loaded and ready"
             self.driver.get("https://mail.google.com/?ui=html")
 
-    # Sends one email to email_address with subject and body
-    def send_email(self, email_addresses, subject, body):
+    # Sends one email to email_address with subject and body and cc 
+    def send_email(self, email_addresses, subject, body, cc):
         try:
             element = WebDriverWait(self.driver, 20).until(
                 EC.title_contains("- Inbox")
@@ -130,6 +131,11 @@ class Emailer:
         for email in email_addresses:
             to_area.send_keys(email)
             to_area.send_keys(", ")
+
+        cc_area = self.driver.find_element_by_id("cc")
+        for email in cc:
+            cc_area.send_keys(email)
+            cc_area.send_keys(", ")
 
         subject_area = self.driver.find_element_by_xpath("/html/body/table[2]/tbody/tr/td[2]/table[1]/tbody/tr/td[2]/form/table[2]/tbody/tr[4]/td[2]/input")
         subject_area.send_keys(subject)
@@ -207,7 +213,7 @@ class Emailer:
 
             mail_temp = self.email_template(receiver=receiver,misc=misc)
 
-            self.send_email(contact['emails'], self.subject_line, mail_temp)
+            self.send_email(contact['emails'], self.subject_line, mail_temp, self.cc)
             print "Email sent to {0} at {1}".format(contact['name'],str(contact['emails']))
 
 
