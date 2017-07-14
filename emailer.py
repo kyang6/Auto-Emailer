@@ -1,5 +1,3 @@
-# encoding=utf8  
-
 import time
 import random
 import json
@@ -11,9 +9,6 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from random import randint
-
-reload(sys)  
-sys.setdefaultencoding('utf8')
 
 
 # Make sure requirements are installed using: pip install -r requirements.txt
@@ -80,7 +75,7 @@ class Emailer:
             except:
                 print("Error reading in JSON file", sys.exc_info()[0])
         elif file_type == 'CSV':
-            print "Sorry, CSV contact file support is not yet implemented"
+            print("Sorry, CSV contact file support is not yet implemented")
             exit()
 
         self.username_email = username_email
@@ -99,13 +94,13 @@ class Emailer:
     def custom_login(self):
         self.driver.get("https://mail.google.com/?ui=html")
         timeout_time = 60
-        print "You have {0} seconds to login".format(str(timeout_time))
+        print("You have {0} seconds to login".format(str(timeout_time)))
         try:
             element = WebDriverWait(self.driver, timeout_time).until(
-                EC.title_contains(".")
+                EC.title_contains("-")
             )
         finally: 
-            print "Gmail loaded and ready"
+            print("Gmail loaded and ready")
             self.driver.get("https://mail.google.com/?ui=html")
 
     # Sends one email to email_address with subject and body and cc 
@@ -115,7 +110,7 @@ class Emailer:
                 EC.title_contains("- Inbox")
             )
         finally: 
-        	print "Gmail loaded and ready"
+        	print("Gmail loaded and ready")
 
         compose = self.driver.find_element_by_xpath("/html/body/table[2]/tbody/tr/td[1]/table[1]/tbody/tr[1]/td/b/a")
         compose.click()
@@ -125,7 +120,7 @@ class Emailer:
                 EC.visibility_of_element_located((By.ID, "to"))
             )
         finally: 
-            print "Compose page loaded and ready"
+            print("Compose page loaded and ready")
 
         to_area = self.driver.find_element_by_id("to")
         for email in email_addresses:
@@ -170,7 +165,7 @@ class Emailer:
                 " Make sure to provide both during instantiation.")
             exit()
 
-        print "auto_login is not recommended. Be wary, as your password will be in plaintext"
+        print("auto_login is not recommended. Be wary, as your password will be in plaintext")
 
         self.driver.get("https://mail.google.com/?ui=html")
 
@@ -183,7 +178,7 @@ class Emailer:
                 EC.visibility_of_element_located((By.ID, "Passwd"))
             )
         finally: 
-            print "Password page loaded"
+            print("Password page loaded")
         password = self.driver.find_element_by_id("Passwd")
         password.send_keys(self.password)
         sign_in = self.driver.find_element_by_id("signIn")
@@ -193,7 +188,7 @@ class Emailer:
                 EC.title_contains(".")
             )
         finally: 
-            print "Gmail loaded and ready"
+            print("Gmail loaded and ready")
             self.driver.get("https://mail.google.com/?ui=html")
 
     
@@ -214,7 +209,7 @@ class Emailer:
             mail_temp = self.email_template(receiver=receiver,misc=misc)
 
             self.send_email(contact['emails'], self.subject_line, mail_temp, self.cc)
-            print "Email sent to {0} at {1}".format(contact['name'],str(contact['emails']))
+            print("Email sent to {0} at {1}".format(contact['name'],str(contact['emails'])))
 
 
                         
