@@ -12,7 +12,9 @@ msg = [
 subject = "Test Subject Line"
 
 emailer = Emailer(email_body=msg, subject_line=subject, sender_name="Kevin", contacts_file = "test_contacts.txt", \
-    path_to_driver="/Users/admin/Documents/chromedriver", cc=["itotalpwnyou@gmail.com"])
+    path_to_driver="/Users/admin/Desktop/chromedriver", cc=["itotalpwnyou@gmail.com"], \
+    username_email="itotalpwnyou@gmail.com", password="Ky521997")
 
-emailer.custom_login()
+# emailer.custom_login()
+emailer.auto_login()
 emailer.send_emails()

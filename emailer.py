@@ -169,23 +169,39 @@ class Emailer:
 
         self.driver.get("https://mail.google.com/?ui=html")
 
-        emailid=self.driver.find_element_by_id("Email")
+        emailid=self.driver.find_element_by_id("identifierId")
         emailid.send_keys(self.username_email)
-        next_button = self.driver.find_element_by_id('next')
+
+        next_button = self.driver.find_element_by_id('identifierNext')
         next_button.click()
         try:
             element = WebDriverWait(self.driver, 5).until(
-                EC.visibility_of_element_located((By.ID, "Passwd"))
+                EC.visibility_of_element_located((By.ID, "password"))
             )
         finally: 
             print("Password page loaded")
-        password = self.driver.find_element_by_id("Passwd")
+        password = self.driver.find_element_by_id("password").find_element_by_tag_name("input")
         password.send_keys(self.password)
-        sign_in = self.driver.find_element_by_id("signIn")
+        sign_in = self.driver.find_element_by_id("passwordNext")
         sign_in.click()
+
+        simple_html_shown = False
+        try:
+            element = WebDriverWait(self.driver, 2).until(
+                EC.title_contains("Do you really want to use HTML Gmail?")
+            )
+            simple_html_shown = True
+        except:
+            print("Simple HTML page not shown.")
+
+        if(simple_html_shown):
+            print("SIMPLE HTML SHOWN")
+            confirm_html = self.driver.find_element_by_css_selector("input[type='submit']")
+            confirm_html.click()
+
         try:
             element = WebDriverWait(self.driver, 20).until(
-                EC.title_contains(".")
+                EC.title_contains("Gmail - Inbox")
             )
         finally: 
             print("Gmail loaded and ready")
