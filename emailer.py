@@ -67,6 +67,10 @@ class Emailer:
             path_to_driver - Path to chrome driver (Required to work)
         """
         self.file_name = contacts_file
+        if(self.file_name.rsplit(".",1)[-1]=="csv"):
+            file_type = 'CSV'
+
+        self.contacts = []
         if file_type == 'JSON':
             self.file_type = 'JSON'
             try:
@@ -75,8 +79,10 @@ class Emailer:
             except:
                 print("Error reading in JSON file", sys.exc_info()[0])
         elif file_type == 'CSV':
-            print("Sorry, CSV contact file support is not yet implemented")
-            exit()
+            try:
+                self.read_csv()
+            except:
+                print("Failed reading in CSV file", sys.exc_info()[0])
 
         self.username_email = username_email
         self.password = password
@@ -88,6 +94,12 @@ class Emailer:
         self.sender_name = sender_name
         self.cc = cc
 
+    # Reads in contacts from a CSV file. Look at the provided example for a sample.
+    def read_csv(self):
+        with open(self.file_name, 'r') as csvfile:
+            reader = csv.DictReader(csvfile)
+            for row in reader:
+                self.contacts.append({"name":row['name'], "emails":row['emails'].split(",")})
 
     # Login to custom email. You need to type in your own information and login
     # You have timeout_time seconds to login before timeout
@@ -105,6 +117,8 @@ class Emailer:
 
     # Sends one email to email_address with subject and body and cc 
     def send_email(self, email_addresses, subject, body, cc):
+        print("Sending emails to {} contacts.".format(len(self.contacts)))
+
         try:
             element = WebDriverWait(self.driver, 20).until(
                 EC.title_contains("- Inbox")
@@ -180,22 +194,19 @@ class Emailer:
             )
         finally: 
             print("Password page loaded")
+
         password = self.driver.find_element_by_id("password").find_element_by_tag_name("input")
         password.send_keys(self.password)
         sign_in = self.driver.find_element_by_id("passwordNext")
         sign_in.click()
 
-        simple_html_shown = False
         try:
             element = WebDriverWait(self.driver, 2).until(
                 EC.title_contains("Do you really want to use HTML Gmail?")
             )
-            simple_html_shown = True
         except:
             print("Simple HTML page not shown.")
-
-        if(simple_html_shown):
-            print("SIMPLE HTML SHOWN")
+        else:
             confirm_html = self.driver.find_element_by_css_selector("input[type='submit']")
             confirm_html.click()
 
@@ -207,7 +218,6 @@ class Emailer:
             print("Gmail loaded and ready")
             self.driver.get("https://mail.google.com/?ui=html")
 
-    
     def send_emails(self):
         print("Sending emails...")
         for contact in self.contacts:
@@ -227,8 +237,6 @@ class Emailer:
             self.send_email(contact['emails'], self.subject_line, mail_temp, self.cc)
             print("Email sent to {0} at {1}".format(contact['name'],str(contact['emails'])))
 
-
-                        
 # ---------------------------------------------------------- #
 def main():
     msg = [

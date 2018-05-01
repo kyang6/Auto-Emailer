@@ -26,7 +26,7 @@ emailer.send_emails()
 ~~~~
 
 # Parameters
-- contacts_file - name of the json file. Example- chevron.txt
+- contacts_file - name of the json or csv file. Example- chevron.txt and chevron.csv
 - file_type- the type of file that contacts_file is. Currently only JSON is supported
 - username_email- gmail email used to auto login if so desired (Required for auto_login)
 - password- gmail password used to auto login if so desired (Required for auto_login)
