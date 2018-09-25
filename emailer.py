@@ -74,10 +74,20 @@ class Emailer:
         if file_type == 'JSON':
             self.file_type = 'JSON'
             try:
-                contacts_file = open(contacts_file,'r').read()
-                self.contacts = json.loads(contacts_file)
+                print(contacts_file)
+                with open(contacts_file) as json_data:
+                    contacts = json.load(json_data)
+
+                self.contacts = []
+                for name in contacts: 
+                    self.contacts.append({
+                        'name': name,
+                        'emails': [contacts[name]]
+                    })
+
             except:
                 print("Error reading in JSON file", sys.exc_info()[0])
+
         elif file_type == 'CSV':
             try:
                 self.read_csv()
