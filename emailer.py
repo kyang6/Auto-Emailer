@@ -134,7 +134,7 @@ class Emailer:
                 EC.title_contains("- Inbox")
             )
         finally: 
-        	print("Gmail loaded and ready")
+            print("Gmail loaded and ready")
 
         compose = self.driver.find_element_by_xpath("/html/body/table[2]/tbody/tr/td[1]/table[1]/tbody/tr[1]/td/b/a")
         compose.click()
@@ -147,8 +147,10 @@ class Emailer:
             print("Compose page loaded and ready")
 
         to_area = self.driver.find_element_by_id("to")
+
         for email in email_addresses:
-            to_area.send_keys(email)
+            # workaround for formatting issue when downloading emails saved to airtable
+            to_area.send_keys(email.replace("\'","").replace("[","").replace("]",""))
             to_area.send_keys(", ")
 
         cc_area = self.driver.find_element_by_id("cc")
@@ -159,8 +161,8 @@ class Emailer:
         subject_area = self.driver.find_element_by_xpath("/html/body/table[2]/tbody/tr/td[2]/table[1]/tbody/tr/td[2]/form/table[2]/tbody/tr[4]/td[2]/input")
         subject_area.send_keys(subject)
 
-        body_area = self.driver.find_element_by_xpath("/html/body/table[2]/tbody/tr/td[2]/table[1]/tbody/tr/td[2]/form/table[2]/tbody/tr[8]/td[2]/textarea")
-        body_area.send_keys(body)
+        # called 
+        self.writeBodyText(self.email_body)
 
         send_button = self.driver.find_element_by_xpath("/html/body/table[2]/tbody/tr/td[2]/table[1]/tbody/tr/td[2]/form/table[1]/tbody/tr/td/input[1]")
 
@@ -176,7 +178,7 @@ class Emailer:
         msg = self.email_body
 
         msg = '\n\n'.join(msg)
-        msg = msg.replace("__receiver__", receiver)
+        msg = msg.replace("__receiver__", receiver.split(" ")[0])
         msg = msg.replace("__sender_name__", self.sender_name)
         msg = msg.replace("__misc__", misc)
 
@@ -231,6 +233,7 @@ class Emailer:
     def send_emails(self):
         print("Sending emails...")
         for contact in self.contacts:
+            time.sleep(randint(1,5)*0.6)
             if len(contact['emails'])==0: continue
             
             if 'misc' in contact:
@@ -242,10 +245,30 @@ class Emailer:
             else:
                 receiver = "__None__"
 
+            self.receiver = receiver
+            self.misc = misc
             mail_temp = self.email_template(receiver=receiver,misc=misc)
 
             self.send_email(contact['emails'], self.subject_line, mail_temp, self.cc)
             print("Email sent to {0} at {1}".format(contact['name'],str(contact['emails'])))
+
+    def writeBodyText(self, email_body):
+        for line in email_body:
+            line = line.replace("__receiver__", self.receiver.split(" ")[0])
+            line = line.replace("__sender_name__", self.sender_name)
+            line = line.replace("__misc__", self.misc)
+
+            self.driver.execute_script('''
+                document.evaluate(
+                    '/html/body/table[2]/tbody/tr/td[2]/table[1]/tbody/tr/td[2]/form/table[2]/tbody/tr[8]/td[2]/textarea',  
+                    document
+                ).iterateNext().value += '{}';
+            '''.format(line))
+            
+            body_area = self.driver.find_element_by_xpath("/html/body/table[2]/tbody/tr/td[2]/table[1]/tbody/tr/td[2]/form/table[2]/tbody/tr[8]/td[2]/textarea")
+            body_area.send_keys('\n\n')
+
+
 
 # ---------------------------------------------------------- #
 def main():
